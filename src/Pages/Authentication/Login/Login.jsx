@@ -2,6 +2,7 @@ import React from "react";
 import { FaEye, FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -105,12 +106,11 @@ const Login = () => {
         {/* Register Link */}
         <p className="text-center text-gray-600">
           Don't have an account?{" "}
-          <a
-            href="#"
+          <Link to='/register'
             className="text-[#03373D] font-semibold hover:text-[#CAEB66] transition-colors duration-200"
           >
             Register
-          </a>
+          </Link>
         </p>
 
         {/* Divider */}
