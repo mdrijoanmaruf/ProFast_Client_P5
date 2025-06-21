@@ -4,6 +4,7 @@ import NewBanner from '../Banner/NewBanner'
 import HowItWorks from '../HowItWorks/HowItWorks'
 import OurServices from '../OurServices/OurServices'
 import Companies from '../Companies/Companies'
+import Path from '../Path/Path'
 
 const Home = () => {
   return (
@@ -14,6 +15,7 @@ const Home = () => {
         <HowItWorks></HowItWorks>
         <OurServices></OurServices>
         <Companies></Companies>
+        <Path></Path>
       </div>
     </div>
   )
