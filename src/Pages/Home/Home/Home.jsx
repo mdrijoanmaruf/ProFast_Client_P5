@@ -5,6 +5,7 @@ import HowItWorks from '../HowItWorks/HowItWorks'
 import OurServices from '../OurServices/OurServices'
 import Companies from '../Companies/Companies'
 import Path from '../Path/Path'
+import CustomerSatisfaction from '../CustomerSatisfaction/CustomerSatisfaction'
 
 const Home = () => {
   return (
@@ -16,6 +17,7 @@ const Home = () => {
         <OurServices></OurServices>
         <Companies></Companies>
         <Path></Path>
+        <CustomerSatisfaction></CustomerSatisfaction>
       </div>
     </div>
   )
