@@ -3,12 +3,22 @@ import { FaEye, FaGithub, FaUser, FaEnvelope, FaImage, FaLock } from "react-icon
 import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import useAuth from "../../../Hook/useAuth";
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
+  const {createUser} = useAuth()
+
   const onSubmit = (data) => {
     console.log(data);
+    createUser(data.email , data.password)
+    .then(result => {
+        console.log(result.user);
+    })
+    .catch(error => {
+        console.log(error);
+    })
   };
 
   return (
@@ -89,21 +99,15 @@ const Register = () => {
             htmlFor="photoURL"
             className="block text-sm font-medium text-[#03373D] mb-1"
           >
-            Photo URL
+            Photo URL <span className="text-gray-400 text-xs">(Optional)</span>
           </label>
           <div className="relative">
             <input
-              {...register('photoURL', { 
-                required: 'Photo URL is required',
-                pattern: {
-                  value: /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i,
-                  message: 'Please enter a valid image URL'
-                }
-              })}
+              {...register('photoURL')}
               type="url"
               name="photoURL"
               id="photoURL"
-              placeholder="Enter your photo URL"
+              placeholder="Enter your photo URL (optional)"
               className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAEB66] focus:border-transparent transition-all duration-200"
             />
             <FaImage className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -191,7 +195,6 @@ const Register = () => {
         <p className="text-center text-gray-600 pt-2">
           Already have an account?{" "}
           <Link to='/login'
-            href="#"
             className="text-[#03373D] font-semibold hover:text-[#CAEB66] transition-colors duration-200"
           >
             Login
