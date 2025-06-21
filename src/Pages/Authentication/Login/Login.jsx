@@ -1,5 +1,5 @@
-import React from "react";
-import { FaEye, FaGithub } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaEye, FaEyeSlash, FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
@@ -8,8 +8,12 @@ import useAuth from "../../../Hook/useAuth";
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const {signIn} = useAuth()
+  const { signIn } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const onSubmit = (data) => {
     console.log(data);
@@ -25,7 +29,7 @@ const Login = () => {
   return (
     <div>
       {/* Header */}
-      <div className="mb-8 ">
+      <div className="mb-8">
         <h1 className="text-3xl lg:text-4xl font-bold text-[#03373D] mb-2">
           Welcome back
         </h1>
@@ -78,17 +82,18 @@ const Login = () => {
                   message: 'Password must be at least 6 characters'
                 }
               })}
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               id="password"
               placeholder="Enter your password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAEB66] focus:border-transparent transition-all duration-200"
+              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAEB66] focus:border-transparent transition-all duration-200"
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
             >
-              <FaEye />
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
           {errors.password && (
