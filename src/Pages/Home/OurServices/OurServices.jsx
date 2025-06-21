@@ -48,7 +48,7 @@ const OurServices = () => {
   ];
 
   return (
-    <div className="">
+    <div data-aos="fade-up" className="">
       <div className="">
         <div className="rounded-2xl sm:rounded-3xl bg-[#03373D] py-8 sm:py-16 lg:py-24 px-4 sm:px-8 lg:px-12">
           {/* Header Section */}

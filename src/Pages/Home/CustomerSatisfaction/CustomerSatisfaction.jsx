@@ -4,7 +4,7 @@ import bg from '../../../assets/customer.png'
 
 const CustomerSatisfaction = () => {
   return (
-    <div 
+    <div data-aos="fade-up"
       className="relative bg-cover bg-center bg-no-repeat mt-6 flex items-center rounded-2xl"
       style={{ 
         backgroundImage: `url("${bg}")`,
@@ -15,8 +15,8 @@ const CustomerSatisfaction = () => {
       {/* Content */}
       <div className="relative z-10 w-full p-8 sm:p-12 lg:p-20 xl:p-[80px]">
         <div className="max-w-4xl">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-6 sm:mb-8 leading-tight">
-            Merchant and Customer Satisfaction is Our First Priority
+          <h1 className="text-3xl sm:text-3xl lg:text-3xl xl:text-4xl font-bold text-white mb-6 sm:mb-8 leading-tight">
+            Merchant and Customer Satisfaction <br /> is Our First Priority
           </h1>
           
           <p className="text-gray-200 text-base sm:text-lg lg:text-xl mb-8 sm:mb-10 lg:mb-12 leading-relaxed max-w-3xl">

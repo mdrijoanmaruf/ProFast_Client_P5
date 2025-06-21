@@ -30,7 +30,7 @@ const HowItWorks = () => {
   ];
 
   return (
-    <div className=" py-12 sm:py-16 lg:py-20">
+    <div data-aos="fade-up" className=" py-12 sm:py-16 lg:py-20">
       <div className="">
         {/* Section Header */}
         <div className=" mb-12 sm:mb-16">

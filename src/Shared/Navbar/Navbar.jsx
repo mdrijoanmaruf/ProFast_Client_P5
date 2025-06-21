@@ -47,7 +47,7 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="bg-white rounded-xl shadow-sm px-6 py-4">
+    <nav data-aos="fade-down" className="bg-white rounded-xl  px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Logo */}
         <div className="flex-shrink-0">

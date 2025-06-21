@@ -53,7 +53,7 @@ const NewBanner = () => {
   };
 
   return (
-    <div
+    <div data-aos="fade-up"
       className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] rounded-2xl overflow-hidden sm:mx-4 lg:mx-0"
       style={{
         backgroundImage: `url(${bannerBg})`,

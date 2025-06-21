@@ -18,7 +18,7 @@ const Companies = () => {
   ];
 
   return (
-    <div className="py-12 sm:py-16 lg:py-20 bg-gray-50 my-12 rounded-2xl">
+    <div data-aos="fade-up" className="py-12 sm:py-16 lg:py-20 bg-gray-50 my-12 rounded-2xl">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-12">

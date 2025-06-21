@@ -26,11 +26,11 @@ const Path = () => {
   ];
 
   return (
-    <div className="py-12 sm:py-16 lg:py-20 bg-gray-100 rounded-2xl">
-      <div className="container mx-auto px-4">
+    <div data-aos="fade-up" className="py-12 sm:py-16 lg:py-20 bg-gray-100 rounded-2xl">
+      <div className="container mx-auto md:px-12 px-4">
         {/* Header Section */}
         <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 sm:mb-6">
+          <h2 className="text-3xl font-bold text-gray-800 mb-4 sm:mb-6">
             Why Choose ProFast?
           </h2>
           <p className="text-gray-600 text-sm sm:text-base lg:text-lg max-w-3xl mx-auto">
@@ -43,14 +43,12 @@ const Path = () => {
           {features.map((feature, index) => (
             <div
               key={feature.id}
-              className={`flex flex-col lg:flex-row items-center gap-8 sm:gap-12 lg:gap-16 ${
-                index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-              }`}
+              className="flex flex-col lg:flex-row items-center gap-8 sm:gap-12 lg:gap-16 bg-white p-2 pb-8 md:pb-2 rounded-2xl"
             >
-              {/* Image Container */}
-              <div className="flex-shrink-0 w-full lg:w-1/2">
-                <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <div className="aspect-square max-w-xs sm:max-w-sm mx-auto">
+              {/* Image Container - 1/4 size - Always on left */}
+              <div className="flex-shrink-0 w-full lg:w-1/4">
+                <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 ">
+                  <div className="aspect-square max-w-32 sm:max-w-40 lg:max-w-48 mx-auto">
                     <img
                       src={feature.image}
                       alt={feature.title}
@@ -60,18 +58,18 @@ const Path = () => {
                 </div>
               </div>
 
-              {/* Content Container */}
-              <div className="flex-1 text-center lg:text-left">
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#03373D] mb-4 sm:mb-6">
+              {/* Content Container - 3/4 size - Always on right */}
+              <div className="flex-1 lg:w-3/4 text-center lg:text-left">
+                <h3 className="text-2xl font-bold text-[#03373D] mb-4 sm:mb-6">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed max-w-none mx-auto lg:mx-0">
                   {feature.description}
                 </p>
                 
                 {/* Optional: Add a CTA button */}
                 <div className="mt-6 sm:mt-8">
-                  <button className="bg-[#03373D] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-opacity-90 transition-all duration-300 font-medium text-sm sm:text-base">
+                  <button className="bg-[#CAEB66] text-[#03373D] px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-opacity-90 hover:transform hover:scale-105 transition-all duration-300 font-semibold text-sm sm:text-base shadow-lg">
                     Learn More
                   </button>
                 </div>
