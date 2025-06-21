@@ -54,7 +54,7 @@ const NewBanner = () => {
 
   return (
     <div
-      className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] rounded-2xl overflow-hidden mx-2 sm:mx-4 lg:mx-0"
+      className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] rounded-2xl overflow-hidden sm:mx-4 lg:mx-0"
       style={{
         backgroundImage: `url(${bannerBg})`,
         backgroundSize: "cover",

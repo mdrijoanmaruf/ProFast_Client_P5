@@ -31,7 +31,7 @@ const HowItWorks = () => {
 
   return (
     <div className=" py-12 sm:py-16 lg:py-20">
-      <div className="px-4 sm:px-6 lg:px-8">
+      <div className="">
         {/* Section Header */}
         <div className=" mb-12 sm:mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
