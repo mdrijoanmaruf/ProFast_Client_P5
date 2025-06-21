@@ -4,12 +4,22 @@ import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import SocialLogin from "../SocialLogin/SocialLogin";
+import useAuth from "../../../Hook/useAuth";
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const {signIn} = useAuth()
+
 
   const onSubmit = (data) => {
     console.log(data);
+    signIn(data.email, data.password)
+    .then(res => {
+      console.log(res);
+    })
+    .catch(error => {
+      console.log(error);
+    })
   };
 
   return (
