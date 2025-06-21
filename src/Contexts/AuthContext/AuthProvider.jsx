@@ -52,8 +52,8 @@ const AuthProvider = ({children}) => {
     createUser,
     signIn,
     logOut,
-    googleProvider,
-    githubProvider
+    signInWithGithub,
+    singInWithGoogle
   }
   return (
     <AuthContext value = {authInfo}>

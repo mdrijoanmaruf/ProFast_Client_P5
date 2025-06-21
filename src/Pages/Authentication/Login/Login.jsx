@@ -3,6 +3,7 @@ import { FaEye, FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import SocialLogin from "../SocialLogin/SocialLogin";
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -14,7 +15,7 @@ const Login = () => {
   return (
     <div>
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-8 ">
         <h1 className="text-3xl lg:text-4xl font-bold text-[#03373D] mb-2">
           Welcome back
         </h1>
@@ -124,22 +125,7 @@ const Login = () => {
         </div>
 
         {/* Social Login Buttons */}
-        <div className="space-y-3">
-          <button
-            type="button"
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 text-[#03373D] font-medium"
-          >
-            <FcGoogle className="text-lg" />
-            Login with Google
-          </button>
-          <button
-            type="button"
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 text-[#03373D] font-medium"
-          >
-            <FaGithub className="text-lg text-gray-800" />
-            Login with GitHub
-          </button>
-        </div>
+        <SocialLogin></SocialLogin>
       </form>
     </div>
   );

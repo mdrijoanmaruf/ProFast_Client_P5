@@ -4,6 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import useAuth from "../../../Hook/useAuth";
+import SocialLogin from "../SocialLogin/SocialLogin";
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -24,7 +25,7 @@ const Register = () => {
   return (
     <div>
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-6 mt-12 md:mt-0">
         <h1 className="text-3xl lg:text-4xl font-bold text-[#03373D] mb-2">
           Create Account
         </h1>
@@ -212,22 +213,7 @@ const Register = () => {
         </div>
 
         {/* Social Login Buttons */}
-        <div className="space-y-3">
-          <button
-            type="button"
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 text-[#03373D] font-medium"
-          >
-            <FcGoogle className="text-lg" />
-            Register with Google
-          </button>
-          <button
-            type="button"
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 text-[#03373D] font-medium"
-          >
-            <FaGithub className="text-lg text-gray-800" />
-            Register with GitHub
-          </button>
-        </div>
+        <SocialLogin></SocialLogin>
       </form>
     </div>
   );
