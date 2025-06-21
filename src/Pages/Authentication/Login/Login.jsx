@@ -1,8 +1,15 @@
 import React from "react";
 import { FaEye, FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
     <div>
       {/* Header */}
@@ -14,7 +21,7 @@ const Login = () => {
       </div>
 
       {/* Form */}
-      <form className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Email Input */}
         <div>
           <label
@@ -24,12 +31,22 @@ const Login = () => {
             Email Address
           </label>
           <input
+            {...register('email', { 
+              required: 'Email is required',
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: 'Invalid email address'
+              }
+            })}
             type="email"
             name="email"
             id="email"
             placeholder="Enter your email"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAEB66] focus:border-transparent transition-all duration-200"
           />
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+          )}
         </div>
 
         {/* Password Input */}
@@ -42,6 +59,13 @@ const Login = () => {
           </label>
           <div className="relative">
             <input
+              {...register('password', { 
+                required: 'Password is required',
+                minLength: {
+                  value: 6,
+                  message: 'Password must be at least 6 characters'
+                }
+              })}
               type="password"
               name="password"
               id="password"
@@ -55,6 +79,9 @@ const Login = () => {
               <FaEye />
             </button>
           </div>
+          {errors.password && (
+            <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+          )}
         </div>
 
         {/* Forgot Password */}
@@ -102,7 +129,7 @@ const Login = () => {
             type="button"
             className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 text-[#03373D] font-medium"
           >
-            <FcGoogle className="text-lg"></FcGoogle>
+            <FcGoogle className="text-lg" />
             Login with Google
           </button>
           <button
