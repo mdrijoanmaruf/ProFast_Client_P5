@@ -7,6 +7,7 @@ import Register from "../Pages/Authentication/Register/Register";
 import Coverage from "../Pages/Coverage/Coverage";
 import PrivateRoutes from "../Routes/PrivateRoutes";
 import SendParcel from "../Pages/SendParcel/SendParcel";
+import ErrorPage from "../Pages/ErrorPage/ErrorPage";
 
 export const router = createBrowserRouter([
     {
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
                 element : <PrivateRoutes>
                     <SendParcel></SendParcel>
                 </PrivateRoutes>
+            },
+            {
+                path: "*",
+                element: <ErrorPage></ErrorPage>
             }
             
         ]

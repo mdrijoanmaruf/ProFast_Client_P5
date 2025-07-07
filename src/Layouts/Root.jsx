@@ -6,7 +6,7 @@ import Footer from "../Shared/Footer/Footer";
 const Root = () => {
   return (
     <div className="bg-[#EAECED]">
-      <div className=" md:max-w-11/12 mx-auto w-[96%]">
+      <div className=" md:max-w-7xl mx-auto w-[96%]">
         <div className="pt-6">
           <Navbar></Navbar>
         </div>

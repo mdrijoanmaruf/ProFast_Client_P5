@@ -111,26 +111,6 @@ const FAQ = () => {
             ))}
           </div>
         </div>
-
-        {/* Contact Support Section */}
-        <div className="mt-10 sm:mt-12 lg:mt-16 text-center">
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow">
-            <h3 className="text-2xl sm:text-3xl font-bold text-[#03373D] mb-4">
-              Still have questions?
-            </h3>
-            <p className="text-gray-600 text-base sm:text-lg mb-6">
-              Our support team is here to help you 24/7
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-[#CAEB66] text-[#03373D] px-8 py-4 rounded-full font-semibold hover:bg-opacity-90 hover:transform hover:scale-105 transition-all duration-300 shadow-lg">
-                Contact Support
-              </button>
-              <button className="border-2 border-[#CAEB66] text-[#CAEB66] px-8 py-4 rounded-full font-semibold hover:bg-[#CAEB66] hover:text-[#03373D] transition-all duration-300">
-                Call Now
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )
