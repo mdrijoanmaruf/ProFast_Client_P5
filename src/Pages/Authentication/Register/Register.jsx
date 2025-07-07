@@ -1,31 +1,105 @@
-import React from "react";
-import { FaEye, FaGithub, FaUser, FaEnvelope, FaImage, FaLock } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaEye, FaEyeSlash, FaGithub, FaUser, FaEnvelope, FaImage, FaLock } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../../Hook/useAuth";
 import SocialLogin from "../SocialLogin/SocialLogin";
+import Swal from 'sweetalert2';
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const { createUser, updateUserProfile } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-  const {createUser} = useAuth()
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const onSubmit = (data) => {
     console.log(data);
-    createUser(data.email , data.password)
-    .then(result => {
+    createUser(data.email, data.password)
+      .then(result => {
         console.log(result.user);
-    })
-    .catch(error => {
+        
+        // Update user profile with name and photo URL if provided
+        const profileData = {
+          displayName: data.name
+        };
+        
+        if (data.photoURL) {
+          profileData.photoURL = data.photoURL;
+        }
+        
+        // Update profile and show success message
+        updateUserProfile(profileData)
+          .then(() => {
+            // Show success alert
+            Swal.fire({
+              title: 'Registration Successful!',
+              text: `Welcome to ProFast, ${data.name}!`,
+              icon: 'success',
+              confirmButtonText: 'Get Started',
+              confirmButtonColor: '#CAEB66',
+              timer: 3000,
+              timerProgressBar: true
+            }).then(() => {
+              // Navigate to home page
+              navigate('/');
+            });
+          })
+          .catch(profileError => {
+            console.log("Profile update error:", profileError);
+            // Still show success but mention profile update issue
+            Swal.fire({
+              title: 'Registration Successful!',
+              text: `Welcome to ProFast! Your account has been created.`,
+              icon: 'success',
+              confirmButtonText: 'Continue',
+              confirmButtonColor: '#CAEB66',
+              timer: 3000,
+              timerProgressBar: true
+            }).then(() => {
+              navigate('/');
+            });
+          });
+      })
+      .catch(error => {
         console.log(error);
-    })
+        
+        // Determine error message based on error code
+        let errorMessage = 'Registration failed. Please try again.';
+        
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = 'This email is already registered. Please use a different email or try logging in.';
+        } else if (error.code === 'auth/weak-password') {
+          errorMessage = 'Password is too weak. Please use a stronger password.';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = 'Invalid email address format.';
+        } else if (error.code === 'auth/operation-not-allowed') {
+          errorMessage = 'Email/password accounts are not enabled. Please contact support.';
+        } else if (error.code === 'auth/network-request-failed') {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        }
+        
+        // Show error alert
+        Swal.fire({
+          title: 'Registration Failed!',
+          text: errorMessage,
+          icon: 'error',
+          confirmButtonText: 'Try Again',
+          confirmButtonColor: '#ef4444',
+          timer: 5000,
+          timerProgressBar: true
+        });
+      });
   };
 
   return (
     <div>
       {/* Header */}
-      <div className="mb-6 mt-12 md:mt-0">
+      <div className="mb-6">
         <h1 className="text-3xl lg:text-4xl font-bold text-[#03373D] mb-2">
           Create Account
         </h1>
@@ -139,7 +213,7 @@ const Register = () => {
                   message: 'Password must contain at least one uppercase, one lowercase, and one number'
                 }
               })}
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               id="password"
               placeholder="Enter your password"
@@ -148,9 +222,10 @@ const Register = () => {
             <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <button
               type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
             >
-              <FaEye />
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
           {errors.password && (

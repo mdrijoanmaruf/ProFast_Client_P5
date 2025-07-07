@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SocialLogin from "../SocialLogin/SocialLogin";
 import useAuth from "../../../Hook/useAuth";
+import Swal from 'sweetalert2';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { signIn } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -18,12 +20,53 @@ const Login = () => {
   const onSubmit = (data) => {
     console.log(data);
     signIn(data.email, data.password)
-    .then(res => {
-      console.log(res);
+    .then(result => {
+      console.log(result);
+      // Show success alert
+      Swal.fire({
+        title: 'Login Successful!',
+        text: `Welcome back, ${result.user?.displayName || 'User'}!`,
+        icon: 'success',
+        confirmButtonText: 'Continue',
+        confirmButtonColor: '#CAEB66',
+        timer: 3000,
+        timerProgressBar: true
+      }).then(() => {
+        // Navigate to home page
+        navigate('/');
+      });
     })
     .catch(error => {
       console.log(error);
-    })
+      
+      // Determine error message based on error code
+      let errorMessage = 'Login failed. Please try again.';
+      
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = 'No account found with this email address.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Incorrect password. Please try again.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address format.';
+      } else if (error.code === 'auth/user-disabled') {
+        errorMessage = 'This account has been disabled.';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many failed attempts. Please try again later.';
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = 'Network error. Please check your connection.';
+      }
+      
+      // Show error alert
+      Swal.fire({
+        title: 'Login Failed!',
+        text: errorMessage,
+        icon: 'error',
+        confirmButtonText: 'Try Again',
+        confirmButtonColor: '#ef4444',
+        timer: 5000,
+        timerProgressBar: true
+      });
+    });
   };
 
   return (

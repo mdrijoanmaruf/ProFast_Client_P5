@@ -26,13 +26,13 @@ const AuthProvider = ({children}) => {
   const googleProvider = new GoogleAuthProvider();
   const singInWithGoogle = () => {
     setLoading(true)
-    signInWithPopup(auth, googleProvider)
+    return signInWithPopup(auth, googleProvider)
   }
 
   const githubProvider = new GithubAuthProvider()
   const signInWithGithub = () => {
     setLoading(true)
-    signInWithPopup(auth, githubProvider)
+    return signInWithPopup(auth, githubProvider)
   }
 
   useEffect(() => {
