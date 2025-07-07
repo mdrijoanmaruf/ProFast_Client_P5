@@ -223,7 +223,46 @@ const DashboardLayout = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Header */}
+        {/* Mobile Header */}
+        <header className="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-3" data-aos="fade-down">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#CAEB66] transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <div className="flex items-end">
+                <img className="h-6 mb-1" src={logo} alt="ProFast" />
+                <p className="font-bold text-lg -ml-2 text-[#03373D]">ProFast</p>
+              </div>
+            </div>
+            
+            {/* User Avatar */}
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-[#CAEB66] flex items-center justify-center">
+                {user?.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-[#03373D] font-bold text-sm">
+                    {user?.displayName?.charAt(0) ||
+                      user?.email?.charAt(0) ||
+                      "U"}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Desktop Top Header (if needed) */}
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto bg-gray-50" data-aos="fade-up" data-aos-delay="300">
