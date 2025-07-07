@@ -1,12 +1,12 @@
 import React from 'react'
 import Banner from '../Banner/Banner'
-import NewBanner from '../Banner/NewBanner'
 import HowItWorks from '../HowItWorks/HowItWorks'
 import OurServices from '../OurServices/OurServices'
 import Companies from '../Companies/Companies'
 import Path from '../Path/Path'
 import CustomerSatisfaction from '../CustomerSatisfaction/CustomerSatisfaction'
 import FAQ from '../FAQ/FAQ'
+import NewBanner from '../Banner/NewBanner'
 
 const Home = () => {
   return (

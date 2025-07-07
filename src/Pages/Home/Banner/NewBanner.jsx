@@ -83,13 +83,13 @@ const NewBanner = () => {
 
               {/* Main Title */}
               <div className="space-y-1 sm:space-y-2">
-                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight">
+                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold text-gray-900 leading-tight">
                   {slides[currentSlide].title}
                 </h1>
-                <span className="block text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-[#CAEB66] leading-tight">
+                <span className="block text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold text-[#CAEB66] leading-tight">
                   {slides[currentSlide].highlight}
                 </span>
-                <span className="block text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight">
+                <span className="block text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold text-gray-900 leading-tight">
                   {slides[currentSlide].subtitle}
                 </span>
               </div>

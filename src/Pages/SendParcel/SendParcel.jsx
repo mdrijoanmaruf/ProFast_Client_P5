@@ -1,10 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import useAuth from '../../Hook/useAuth'
 import Swal from 'sweetalert2'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 const SendParcel = () => {
   const { user } = useAuth()
+  
+  // Initialize AOS
+  useEffect(() => {
+    AOS.init({
+      duration: 600,
+      easing: 'ease-out-cubic',
+      once: true,
+      mirror: false,
+      offset: 50,
+      disable: 'mobile'
+    })
+    
+    return () => {
+      AOS.refresh()
+    }
+  }, [])
   
   const {
     register,
@@ -69,27 +87,30 @@ const SendParcel = () => {
   }, [watchedReceiverRegion, setValue])
 
   const calculateCost = (formData) => {
-    let baseCost = 0
+    let cost = 0
+    const sameRegion = formData.senderRegion === formData.receiverRegion
     
-    // Base cost by type
     if (formData.type === 'document') {
-      baseCost = 50
+      // Document pricing
+      cost = sameRegion ? 60 : 80
     } else if (formData.type === 'non-document') {
-      baseCost = 100
-      // Additional cost by weight
-      const weight = parseFloat(formData.weight)
-      if (weight > 1) {
-        baseCost += (weight - 1) * 20
+      // Non-document pricing
+      const weight = parseFloat(formData.weight) || 0
+      
+      if (weight <= 3) {
+        // Up to 3kg
+        cost = sameRegion ? 110 : 150
+      } else {
+        // Over 3kg
+        const basePrice = sameRegion ? 110 : 150
+        const extraWeight = weight - 3
+        const extraCost = Math.ceil(extraWeight) * 40
+        const outsideCityExtra = sameRegion ? 0 : 40
+        cost = basePrice + extraCost + outsideCityExtra
       }
     }
     
-    // Regional cost multiplier
-    const sameRegion = formData.senderRegion === formData.receiverRegion
-    if (!sameRegion) {
-      baseCost *= 1.5
-    }
-    
-    return Math.round(baseCost)
+    return Math.round(cost)
   }
 
   const onSubmit = async (formData) => {
@@ -169,7 +190,7 @@ const SendParcel = () => {
       <div className="container mx-auto py-8 lg:py-12">
         <div className="w-full">
           {/* Header */}
-          <div className="text-center mb-8 lg:mb-12">
+          <div className="text-center mb-8 lg:mb-12" data-aos="fade-up">
             <h1 className="text-3xl lg:text-5xl font-bold text-[#03373D] mb-4">
               Send Your Parcel
             </h1>
@@ -179,11 +200,11 @@ const SendParcel = () => {
           </div>
 
           {/* Form */}
-          <div className="bg-white shadow-xl rounded-2xl lg:rounded-3xl overflow-hidden">
+          <div className="bg-white shadow-xl rounded-2xl lg:rounded-3xl overflow-hidden" data-aos="fade-up" data-aos-delay="100">
             <form onSubmit={handleSubmit(onSubmit)}>
               
               {/* Parcel Information Section */}
-              <div className="bg-[#03373D] px-6 lg:px-12 py-8 lg:py-12">
+              <div className="bg-[#03373D] px-6 lg:px-12 py-8 lg:py-12" data-aos="fade-up" data-aos-delay="150">
                 <h2 className="text-2xl lg:text-3xl font-bold text-white mb-6 lg:mb-8 text-center">
                   📦 Parcel Information
                 </h2>
@@ -200,7 +221,7 @@ const SendParcel = () => {
                           value="document"
                           className="mr-3 w-4 h-4 text-[#CAEB66] focus:ring-[#CAEB66] focus:ring-2"
                         />
-                        <span className="text-white font-medium">Document</span>
+              ing-      <span className="text-white font-medium">Document</span>
                       </label>
                       <label className="flex items-center cursor-pointer">
                         <input
@@ -241,7 +262,7 @@ const SendParcel = () => {
                         })}
                         step="0.1"
                         min="0.1"
-                        className="w-full max-w-xs px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAEB66] focus:border-transparent transition-all duration-200"
+                        className="w-full max-w-xs px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAEB66] focus:border-transparent transition-all duration-200 text-white"
                         placeholder="e.g., 2.5"
                       />
                       {errors.weight && <p className="text-red-400 text-sm mt-2">{errors.weight.message}</p>}
@@ -251,14 +272,14 @@ const SendParcel = () => {
               </div>
 
               {/* Sender & Receiver Information */}
-              <div className="px-6 lg:px-12 py-8 lg:py-12">
+              <div className="px-6 lg:px-12 py-8 lg:py-12" data-aos="fade-up" data-aos-delay="200">
                 <h2 className="text-2xl lg:text-3xl font-bold text-[#03373D] mb-8 lg:mb-12 text-center">
                   Pickup & Delivery Information
                 </h2>
                 <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
                   
                   {/* Sender Information */}
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 lg:p-8 rounded-2xl border border-gray-200">
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 lg:p-8 rounded-2xl border border-gray-200" data-aos="slide-right" data-aos-delay="250">
                     <div className="text-center mb-6">
                       <div className="bg-[#03373D] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                         <span className="text-2xl">📦</span>
@@ -358,7 +379,7 @@ const SendParcel = () => {
                   </div>
 
                   {/* Receiver Information */}
-                  <div className="bg-gradient-to-br from-[#CAEB66]/10 to-[#CAEB66]/20 p-6 lg:p-8 rounded-2xl border border-[#CAEB66]/30">
+                  <div className="bg-gradient-to-br from-[#CAEB66]/10 to-[#CAEB66]/20 p-6 lg:p-8 rounded-2xl border border-[#CAEB66]/30" data-aos="slide-left" data-aos-delay="300">
                     <div className="text-center mb-6">
                       <div className="bg-[#CAEB66] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                         <span className="text-2xl">🎯</span>
@@ -460,7 +481,7 @@ const SendParcel = () => {
               </div>
 
               {/* Submit Button Section */}
-              <div className="bg-[#03373D] px-6 lg:px-12 py-8 lg:py-12 text-center">
+              <div className="bg-[#03373D] px-6 lg:px-12 py-8 lg:py-12 text-center" data-aos="fade-up" data-aos-delay="350">
                 <button
                   type="submit"
                   className="bg-[#CAEB66] text-[#03373D] py-4 px-8 lg:px-12 rounded-xl lg:rounded-2xl font-bold text-lg lg:text-xl hover:bg-opacity-90 hover:transform hover:scale-105 transition-all duration-300 shadow-lg"
