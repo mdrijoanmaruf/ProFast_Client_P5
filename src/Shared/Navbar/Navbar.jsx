@@ -57,6 +57,20 @@ const Navbar = () => {
           Coverage
         </NavLink>
       </li>
+      {
+        user && <li>
+        <NavLink
+          to="/dashboard/myParcels"
+          className={({ isActive }) =>
+            `px-4 py-2 rounded-lg transition-colors duration-200 hover:bg-gray-100 ${
+              isActive ? "bg-gray-100 font-semibold" : ""
+            }`
+          }
+        >
+          Dashboard
+        </NavLink>
+      </li>
+      }
       <li>
         <NavLink
           to="/about"
