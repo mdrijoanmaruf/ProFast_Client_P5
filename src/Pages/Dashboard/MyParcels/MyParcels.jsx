@@ -14,11 +14,13 @@ import {
   FaDollarSign,
   FaPaperPlane
 } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 const MyParcels = () => {
   const { user } = useAuth()
   const axiosSecure = useAxiosSecure()
   const [selectedParcel, setSelectedParcel] = useState(null)
+  const navigate = useNavigate()
 
   const { data: parcels = [], refetch } = useQuery({
     queryKey: ['my-parcels', user.email],
@@ -98,22 +100,9 @@ const MyParcels = () => {
     })
   }
 
-  const handlePayment = (parcel) => {
-    Swal.fire({
-      title: '💳 Payment',
-      text: `Process payment of ৳${parcel.cost} for parcel "${parcel.title}"?`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#27ae60',
-      cancelButtonColor: '#e74c3c',
-      confirmButtonText: 'Pay Now',
-      cancelButtonText: 'Cancel'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // TODO: Implement payment logic
-        Swal.fire('Success!', 'Payment processed successfully!', 'success')
-      }
-    })
+  const handlePayment = (id) => {
+    navigate(`/dashboard/payment/${id}`);
+    console.log(id);
   }
 
   const handleDelete = (parcel) => {
@@ -245,7 +234,7 @@ const MyParcels = () => {
                 {/* Pay Button */}
                 {parcel.status === 'pending' && (
                   <button
-                    onClick={() => handlePayment(parcel)}
+                    onClick={() => handlePayment(parcel._id)}
                     className="flex items-center space-x-1 px-3 py-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors text-sm"
                   >
                     <FaCreditCard className="w-4 h-4" />

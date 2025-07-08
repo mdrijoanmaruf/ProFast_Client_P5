@@ -357,7 +357,7 @@ const SendParcel = () => {
                           value="document"
                           className="mr-3 w-4 h-4 text-[#CAEB66] focus:ring-[#CAEB66] focus:ring-2"
                         />
-                        ing-{" "}
+                        
                         <span className="text-white font-medium">Document</span>
                       </label>
                       <label className="flex items-center cursor-pointer">

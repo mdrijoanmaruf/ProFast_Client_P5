@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../../Hook/useAuth";
 import Swal from 'sweetalert2';
 
-const SocialLogin = () => {
+const SocialLogin = ({ redirectTo = '/' }) => {
     const { signInWithGithub, singInWithGoogle } = useAuth();
     const navigate = useNavigate();
 
@@ -24,8 +24,8 @@ const SocialLogin = () => {
                 timer: 3000,
                 timerProgressBar: true
             }).then(() => {
-                // Navigate to home page
-                navigate('/');
+                // Navigate to intended path or home page
+                navigate(redirectTo, { replace: true });
             });
         })
         .catch(error => {
@@ -74,8 +74,8 @@ const SocialLogin = () => {
                 timer: 3000,
                 timerProgressBar: true
             }).then(() => {
-                // Navigate to home page
-                navigate('/');
+                // Navigate to intended path or home page
+                navigate(redirectTo, { replace: true });
             });
         })
         .catch(error => {

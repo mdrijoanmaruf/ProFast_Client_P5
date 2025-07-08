@@ -1,13 +1,14 @@
 import React from 'react'
 import useAuth from '../Hook/useAuth'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 
 const PrivateRoutes = ({children}) => {
     const {user , loading} = useAuth()
+    const location = useLocation();
 
     if(loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-[#03373D] via-[#03373D] to-[#1a5a62] flex items-center justify-center rounded-2xl">
+            <div className="min-h-screen bg-gradient-to-br from-[#03373D] via-[#03373D] to-[#1a5a62] flex items-center justify-center ">
                 <div className="text-center">
                     {/* Animated Logo/Brand */}
                     <div className="mb-8">
@@ -45,7 +46,7 @@ const PrivateRoutes = ({children}) => {
     }
 
     if(!user) {
-        return <Navigate to='/login'></Navigate>
+        return <Navigate to='/login' state={{from: location}} replace></Navigate>
     }
   return children;
 }

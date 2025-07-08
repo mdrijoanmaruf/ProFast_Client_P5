@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaGithub, FaUser, FaEnvelope, FaImage, FaLock } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../../Hook/useAuth";
 import SocialLogin from "../SocialLogin/SocialLogin";
 import Swal from 'sweetalert2';
@@ -12,6 +12,10 @@ const Register = () => {
   const { createUser, updateUserProfile } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get the intended path from location state, default to '/' if not available
+  const from = location.state?.from?.pathname || '/';
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -45,8 +49,8 @@ const Register = () => {
               timer: 3000,
               timerProgressBar: true
             }).then(() => {
-              // Navigate to home page
-              navigate('/');
+              // Navigate to intended path or home page
+              navigate(from, { replace: true });
             });
           })
           .catch(profileError => {
@@ -61,7 +65,7 @@ const Register = () => {
               timer: 3000,
               timerProgressBar: true
             }).then(() => {
-              navigate('/');
+              navigate(from, { replace: true });
             });
           });
       })
@@ -288,7 +292,7 @@ const Register = () => {
         </div>
 
         {/* Social Login Buttons */}
-        <SocialLogin></SocialLogin>
+        <SocialLogin redirectTo={from}></SocialLogin>
       </form>
     </div>
   );
