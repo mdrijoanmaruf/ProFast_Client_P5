@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { FaCreditCard, FaLock, FaCheckCircle } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import useAxiosSecure from '../../../Hook/useAxiosSecure';
 
 const PaymentForm = () => {
   const stripe = useStripe()
@@ -9,6 +12,17 @@ const PaymentForm = () => {
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
+  const {parcelId} = useParams()
+  const axiosSecure = useAxiosSecure()
+  console.log(parcelId)
+
+  const {} = useQuery({
+    queryKey: ['parcels' , parcelId],
+    queryFn : async() => {
+      const res = await axiosSecure.get(`/parcels/${parcelId}`);
+      return res.data;
+    }
+  })
   
     const handleSubmit = async (e) => {
         e.preventDefault();
