@@ -101,7 +101,7 @@ const MyParcels = () => {
   }
 
   const handlePayment = (id) => {
-    navigate(`/dashboard/payment/${id}`);
+    navigate(`/dashboard/payment/${id._id}`);
     console.log(id);
   }
 

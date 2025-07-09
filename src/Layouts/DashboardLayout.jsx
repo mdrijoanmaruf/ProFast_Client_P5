@@ -4,6 +4,17 @@ import useAuth from "../Hook/useAuth";
 import logo from "../assets/logo.png";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { 
+  FaBox, 
+  FaPaperPlane, 
+  FaSearch, 
+  FaUser, 
+  FaCreditCard, 
+  FaHome, 
+  FaSignOutAlt, 
+  FaTimes, 
+  FaBars 
+} from 'react-icons/fa';
 
 
 const DashboardLayout = () => {
@@ -41,31 +52,31 @@ const DashboardLayout = () => {
     {
       name: "My Parcels",
       path: "/dashboard/myParcels",
-      icon: "📦",
+      icon: <FaBox />,
       description: "View and manage your parcels",
     },
     {
       name: "Send Parcel",
       path: "/sendParcel",
-      icon: "📮",
+      icon: <FaPaperPlane />,
       description: "Send a new parcel",
     },
     {
       name: "Track Parcel",
       path: "/dashboard/track",
-      icon: "🔍",
+      icon: <FaSearch />,
       description: "Track your parcels",
     },
     {
       name: "Profile",
       path: "/dashboard/profile",
-      icon: "👤",
+      icon: <FaUser />,
       description: "Manage your profile",
     },
     {
       name: "Payment History",
       path: "/dashboard/payments",
-      icon: "💳",
+      icon: <FaCreditCard />,
       description: "View payment history",
     },
   ];
@@ -105,19 +116,7 @@ const DashboardLayout = () => {
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden text-white hover:text-[#CAEB66] transition-colors"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <FaTimes className="w-6 h-6" />
           </button>
         </div>
 
@@ -157,8 +156,8 @@ const DashboardLayout = () => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                data-aos="fade-right"
-                data-aos-delay={300 + (index * 50)}
+                // data-aos="fade-right"
+                // data-aos-delay={300 + (index * 50)}
                 className={`flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-200 group ${
                   isActive
                     ? "bg-[#03373D] text-white shadow-lg"
@@ -206,7 +205,7 @@ const DashboardLayout = () => {
             data-aos-delay="650"
             className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors duration-200"
           >
-            <span className="text-xl">🏠</span>
+            <FaHome className="text-xl" />
             <span className="font-medium">Back to Home</span>
           </Link>
           <button
@@ -215,7 +214,7 @@ const DashboardLayout = () => {
             data-aos-delay="700"
             className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors duration-200"
           >
-            <span className="text-xl">🚪</span>
+            <FaSignOutAlt className="text-xl" />
             <span className="font-medium">Logout</span>
           </button>
         </div>
@@ -231,9 +230,7 @@ const DashboardLayout = () => {
                 onClick={() => setSidebarOpen(true)}
                 className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#CAEB66] transition-colors"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+                <FaBars className="w-6 h-6" />
               </button>
               <div className="flex items-end">
                 <img className="h-6 mb-1" src={logo} alt="ProFast" />

@@ -1,0 +1,156 @@
+import React, { useState } from 'react'
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { FaCreditCard, FaLock, FaCheckCircle } from 'react-icons/fa';
+
+const PaymentForm = () => {
+  const stripe = useStripe()
+  const elements = useElements()
+  const [processing, setProcessing] = useState(false)
+  const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(false)
+  
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setProcessing(true);
+        setError(null);
+
+        if(!stripe || !elements){
+          setProcessing(false);
+          return;
+        }
+        
+        const card = elements.getElement(CardElement);
+
+        if(!card){
+          setProcessing(false);
+          return;
+        }
+
+        const {error , paymentMethod} = await stripe.createPaymentMethod({
+          type: 'card',
+          card
+        })
+
+        if(error){
+          setError(error.message);
+          setProcessing(false);
+        } else {
+          console.log("Payment method : " , paymentMethod)
+          setSuccess(true);
+          setProcessing(false);
+        }
+    }
+
+  const cardElementOptions = {
+    style: {
+      base: {
+        fontSize: '16px',
+        color: '#424770',
+        '::placeholder': {
+          color: '#aab7c4',
+        },
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+      },
+      invalid: {
+        color: '#9e2146',
+      },
+    },
+  };
+  return (
+    <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-[#03373D] to-[#044a52] px-6 py-4">
+        <div className="flex items-center space-x-3">
+          <FaCreditCard className="text-[#CAEB66] text-xl" />
+          <h2 className="text-white text-lg font-semibold">Payment Details</h2>
+        </div>
+        <p className="text-[#CAEB66] text-sm mt-1">Complete your parcel pickup payment</p>
+      </div>
+
+      {/* Form Content */}
+      <div className="px-6 py-6">
+        {success ? (
+          <div className="text-center py-8">
+            <FaCheckCircle className="text-green-500 text-4xl mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Payment Successful!</h3>
+            <p className="text-gray-600">Your parcel pickup payment has been processed successfully.</p>
+          </div>
+        ) : (
+          <>
+            {/* Payment Amount */}
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600 font-medium">Parcel Pickup Fee</span>
+                <span className="text-2xl font-bold text-[#03373D]">$15.00</span>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Card Element Container */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Card Information
+                </label>
+                <div className="relative">
+                  <div className="border border-gray-300 rounded-lg p-4 bg-white focus-within:ring-2 focus-within:ring-[#CAEB66] focus-within:border-[#CAEB66] transition-all duration-200">
+                    <CardElement options={cardElementOptions} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Security Notice */}
+              <div className="flex items-center space-x-2 text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+                <FaLock className="text-blue-600" />
+                <span>Your payment information is secure and encrypted</span>
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <p className="text-red-600 text-sm">{error}</p>
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <button 
+                type="submit" 
+                disabled={!stripe || processing}
+                className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 ${
+                  !stripe || processing
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-[#03373D] hover:bg-[#044a52] active:scale-95'
+                } focus:outline-none focus:ring-2 focus:ring-[#CAEB66] focus:ring-offset-2`}
+              >
+                {processing ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Processing...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center space-x-2">
+                    <FaCreditCard />
+                    <span>Pay $15.00 for Parcel Pickup</span>
+                  </div>
+                )}
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+        <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
+          <span>Powered by Stripe</span>
+          <span>•</span>
+          <span>SSL Secured</span>
+          <span>•</span>
+          <span>PCI Compliant</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default PaymentForm
