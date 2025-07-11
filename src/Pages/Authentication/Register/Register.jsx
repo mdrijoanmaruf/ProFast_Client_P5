@@ -6,6 +6,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../../Hook/useAuth";
 import SocialLogin from "../SocialLogin/SocialLogin";
 import Swal from 'sweetalert2';
+import axios from "axios";
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -21,19 +22,49 @@ const Register = () => {
     setShowPassword(!showPassword);
   };
 
+  const [uploadedImageURL, setUploadedImageURL] = useState(null);
+  const [imageUploading, setImageUploading] = useState(false);
+
+  const handleImageUpload = async (e) => {
+    const image = e.target.files[0];
+    if (!image) return;
+    
+    console.log('Selected image:', image);
+    setImageUploading(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append('image', image);
+
+      const res = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_ImageBB_API_Key}`, formData);
+      console.log('Upload response:', res.data);
+    } catch (error) {
+      console.error('Image upload error:', error);
+      Swal.fire({
+        title: 'Upload Failed!',
+        text: 'Failed to upload image. Please try again.',
+        icon: 'error',
+        timer: 3000,
+        showConfirmButton: false
+      });
+    } finally {
+      setImageUploading(false);
+    }
+  }
+
   const onSubmit = (data) => {
     console.log(data);
     createUser(data.email, data.password)
       .then(result => {
         console.log(result.user);
         
-        // Update user profile with name and photo URL if provided
+        // Update user profile with name and photo URL if uploaded
         const profileData = {
           displayName: data.name
         };
         
-        if (data.photoURL) {
-          profileData.photoURL = data.photoURL;
+        if (uploadedImageURL) {
+          profileData.photoURL = uploadedImageURL;
         }
         
         // Update profile and show success message
@@ -172,27 +203,42 @@ const Register = () => {
           )}
         </div>
 
-        {/* Photo URL Input */}
+        {/* Profile Picture Input */}
         <div>
           <label
-            htmlFor="photoURL"
+            htmlFor="profilePicture"
             className="block text-sm font-medium text-[#03373D] mb-1"
           >
-            Photo URL <span className="text-gray-400 text-xs">(Optional)</span>
+            Profile Picture <span className="text-gray-400 text-xs">(Optional)</span>
           </label>
           <div className="relative">
             <input
-              {...register('photoURL')}
-              type="url"
-              name="photoURL"
-              id="photoURL"
-              placeholder="Enter your photo URL (optional)"
-              className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAEB66] focus:border-transparent transition-all duration-200"
+              {...register('profilePicture')}
+              type="file"
+              name="profilePicture"
+              id="profilePicture"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAEB66] focus:border-transparent transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-[#CAEB66] file:text-[#03373D] hover:file:bg-opacity-90"
+              disabled={imageUploading}
             />
-            <FaImage className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FaImage className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
           </div>
-          {errors.photoURL && (
-            <p className="text-red-500 text-sm mt-1">{errors.photoURL.message}</p>
+          {imageUploading && (
+            <p className="text-blue-500 text-sm mt-1">Uploading image...</p>
+          )}
+          {uploadedImageURL && (
+            <div className="mt-2 flex items-center gap-2">
+              <img 
+                src={uploadedImageURL} 
+                alt="Uploaded profile" 
+                className="w-12 h-12 rounded-full object-cover border-2 border-[#CAEB66]"
+              />
+              <p className="text-green-500 text-sm">✓ Image uploaded successfully</p>
+            </div>
+          )}
+          {errors.profilePicture && (
+            <p className="text-red-500 text-sm mt-1">{errors.profilePicture.message}</p>
           )}
         </div>
 
