@@ -3,16 +3,39 @@ import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../../Hook/useAuth";
+import useAxios from "../../../Hook/useAxios";
 import Swal from 'sweetalert2';
 
 const SocialLogin = ({ redirectTo = '/' }) => {
     const { signInWithGithub, singInWithGoogle } = useAuth();
     const navigate = useNavigate();
+    const axiosInstance = useAxios();
 
     const handleGoogleLogin = () => {
         singInWithGoogle()
-        .then(result => {
+        .then(async (result) => {
             console.log(result);
+
+            // Create or update user in database
+            const userInfo = {
+                email: result.user.email,
+                name: result.user.displayName || '',
+                photoURL: result.user.photoURL || '',
+                emailVerified: result.user.emailVerified,
+                uid: result.user.uid,
+                provider: 'google',
+                phoneNumber: result.user.phoneNumber || '',
+                role: 'user',
+                created_at: new Date().toISOString(),
+                last_log_in: new Date().toISOString()
+            };
+
+            try {
+                const userRes = await axiosInstance.post('/users', userInfo);
+                console.log(userRes.data);
+            } catch (error) {
+                console.error('Error saving user data:', error);
+            }
             
             // Show success alert
             Swal.fire({
@@ -61,8 +84,29 @@ const SocialLogin = ({ redirectTo = '/' }) => {
 
     const handleGithubLogin = () => {
         signInWithGithub()
-        .then(result => {
+        .then(async (result) => {
             console.log(result);
+
+            // Create or update user in database
+            const userInfo = {
+                email: result.user.email,
+                name: result.user.displayName || '',
+                photoURL: result.user.photoURL || '',
+                emailVerified: result.user.emailVerified,
+                uid: result.user.uid,
+                provider: 'github',
+                phoneNumber: result.user.phoneNumber || '',
+                role: 'user',
+                created_at: new Date().toISOString(),
+                last_log_in: new Date().toISOString()
+            };
+
+            try {
+                const userRes = await axiosInstance.post('/users', userInfo);
+                console.log(userRes.data);
+            } catch (error) {
+                console.error('Error saving user data:', error);
+            }
             
             // Show success alert
             Swal.fire({

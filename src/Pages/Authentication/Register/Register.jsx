@@ -7,13 +7,16 @@ import useAuth from "../../../Hook/useAuth";
 import SocialLogin from "../SocialLogin/SocialLogin";
 import Swal from 'sweetalert2';
 import axios from "axios";
+import useAxios from "../../../Hook/useAxios";
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { createUser, updateUserProfile } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [profilePicture , setProfilePicture] = useState()
   const navigate = useNavigate();
   const location = useLocation();
+  const axiosInstance = useAxios()
 
   // Get the intended path from location state, default to '/' if not available
   const from = location.state?.from?.pathname || '/';
@@ -29,20 +32,94 @@ const Register = () => {
     const image = e.target.files[0];
     if (!image) return;
     
-    console.log('Selected image:', image);
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(image.type)) {
+      Swal.fire({
+        title: 'Invalid File Type!',
+        text: 'Please select a valid image file (JPEG, PNG, GIF, WebP).',
+        icon: 'error',
+        timer: 3000,
+        showConfirmButton: false
+      });
+      return;
+    }
+    
+    // Validate file size (max 32MB for ImgBB)
+    const maxSize = 32 * 1024 * 1024; // 32MB in bytes
+    if (image.size > maxSize) {
+      Swal.fire({
+        title: 'File Too Large!',
+        text: 'Please select an image smaller than 32MB.',
+        icon: 'error',
+        timer: 3000,
+        showConfirmButton: false
+      });
+      return;
+    }
+    
+    // Check if API key exists
+    const apiKey = import.meta.env.VITE_ImageBB_API_Key;
+    if (!apiKey) {
+      Swal.fire({
+        title: 'Configuration Error!',
+        text: 'Image upload service is not configured. Please contact support.',
+        icon: 'error',
+        timer: 3000,
+        showConfirmButton: false
+      });
+      console.error('ImgBB API key is missing');
+      return;
+    }
+    
     setImageUploading(true);
     
     try {
       const formData = new FormData();
       formData.append('image', image);
+      
 
-      const res = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_ImageBB_API_Key}`, formData);
-      console.log('Upload response:', res.data);
+      const res = await axios.post(`https://api.imgbb.com/1/upload?key=${apiKey}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      
+      if (res.data.success) {
+        setProfilePicture(res.data.data.display_url);
+        setUploadedImageURL(res.data.data.display_url);
+        Swal.fire({
+          title: 'Image Uploaded!',
+          text: 'Your profile picture has been uploaded successfully.',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      } else {
+        throw new Error('Upload failed: ' + JSON.stringify(res.data));
+      }
     } catch (error) {
       console.error('Image upload error:', error);
+      
+      let errorMessage = 'Failed to upload image. Please try again.';
+      
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+        console.error('Error status:', error.response.status);
+        
+        if (error.response.status === 400) {
+          errorMessage = 'Invalid image or API configuration. Please try a different image.';
+        } else if (error.response.status === 403) {
+          errorMessage = 'API key is invalid or expired.';
+        } else if (error.response.status === 413) {
+          errorMessage = 'Image file is too large. Please use a smaller image.';
+        }
+      }
+      
       Swal.fire({
         title: 'Upload Failed!',
-        text: 'Failed to upload image. Please try again.',
+        text: errorMessage,
         icon: 'error',
         timer: 3000,
         showConfirmButton: false
@@ -53,18 +130,32 @@ const Register = () => {
   }
 
   const onSubmit = (data) => {
-    console.log(data);
     createUser(data.email, data.password)
-      .then(result => {
-        console.log(result.user);
+      .then(async (result) => {
+
+        const userInfo ={
+          email: data.email,
+          name: data.name,
+          photoURL: profilePicture || '',
+          emailVerified: result.user.emailVerified,
+          uid: result.user.uid,
+          provider: 'email',
+          phoneNumber: result.user.phoneNumber || '',
+          role: 'user',
+          created_at: new Date().toISOString(),
+          last_log_in: new Date().toISOString()
+        }
+
+        const userRes = await axiosInstance.post('/users' , userInfo)
+        console.log(userRes.data)
         
         // Update user profile with name and photo URL if uploaded
         const profileData = {
           displayName: data.name
         };
         
-        if (uploadedImageURL) {
-          profileData.photoURL = uploadedImageURL;
+        if (profilePicture) {
+          profileData.photoURL = profilePicture;
         }
         
         // Update profile and show success message
@@ -85,7 +176,6 @@ const Register = () => {
             });
           })
           .catch(profileError => {
-            console.log("Profile update error:", profileError);
             // Still show success but mention profile update issue
             Swal.fire({
               title: 'Registration Successful!',
@@ -227,10 +317,10 @@ const Register = () => {
           {imageUploading && (
             <p className="text-blue-500 text-sm mt-1">Uploading image...</p>
           )}
-          {uploadedImageURL && (
+          {profilePicture && (
             <div className="mt-2 flex items-center gap-2">
               <img 
-                src={uploadedImageURL} 
+                src={profilePicture} 
                 alt="Uploaded profile" 
                 className="w-12 h-12 rounded-full object-cover border-2 border-[#CAEB66]"
               />

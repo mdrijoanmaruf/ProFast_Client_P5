@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import SocialLogin from "../SocialLogin/SocialLogin";
 import useAuth from "../../../Hook/useAuth";
+import useAxios from "../../../Hook/useAxios";
 import Swal from 'sweetalert2';
 
 const Login = () => {
@@ -13,6 +14,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const axiosInstance = useAxios();
 
   // Get the intended path from location state, default to '/' if not available
   const from = location.state?.from?.pathname || '/';
@@ -24,8 +26,30 @@ const Login = () => {
   const onSubmit = (data) => {
     console.log(data);
     signIn(data.email, data.password)
-    .then(result => {
+    .then(async (result) => {
       console.log(result);
+
+      // Create or update user in database
+      const userInfo = {
+        email: result.user.email,
+        name: result.user.displayName || '',
+        photoURL: result.user.photoURL || '',
+        emailVerified: result.user.emailVerified,
+        uid: result.user.uid,
+        provider: 'email',
+        phoneNumber: result.user.phoneNumber || '',
+        role: 'user',
+        created_at: new Date().toISOString(),
+        last_log_in: new Date().toISOString()
+      };
+
+      try {
+        const userRes = await axiosInstance.post('/users', userInfo);
+        console.log(userRes.data);
+      } catch (error) {
+        console.error('Error saving user data:', error);
+      }
+
       // Show success alert
       Swal.fire({
         title: 'Login Successful!',
