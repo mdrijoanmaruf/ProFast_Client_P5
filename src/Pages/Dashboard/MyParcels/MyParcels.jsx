@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import useAuth from '../../../Hook/useAuth'
 import { useQuery } from '@tanstack/react-query'
 import useAxiosSecure from '../../../Hook/useAxiosSecure'
@@ -29,6 +29,24 @@ const MyParcels = () => {
       return res.data
     }
   })
+
+  // Refetch data when component becomes visible (user returns from payment)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        refetch()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    
+    // Also refetch when component mounts
+    refetch()
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-BD', {
@@ -100,9 +118,9 @@ const MyParcels = () => {
     })
   }
 
-  const handlePayment = (id) => {
-    navigate(`/dashboard/payment/${id._id}`);
-    console.log(id);
+  const handlePayment = (parcelId) => {
+    navigate(`/dashboard/payment/${parcelId}`);
+    console.log(parcelId);
   }
 
   const handleDelete = (parcel) => {
@@ -333,7 +351,7 @@ const MyParcels = () => {
                       {/* Pay Button */}
                       {parcel.status === 'pending' && (
                         <button
-                          onClick={() => handlePayment(parcel)}
+                          onClick={() => handlePayment(parcel._id)}
                           className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                           title="Pay Now"
                         >

@@ -7,9 +7,11 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { FaCreditCard, FaLock, FaCheckCircle } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../Hook/useAxiosSecure";
+import useAuth from "../../../Hook/useAuth";
+import Swal from "sweetalert2";
 
 // Initialize Stripe with error handling
 const stripePromise = loadStripe(import.meta.env.VITE_PaymentKey).catch(error => {
@@ -25,6 +27,8 @@ const CheckoutForm = () => {
   const [success, setSuccess] = useState(false);
   const { parcelId } = useParams();
   const axiosSecure = useAxiosSecure();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   console.log(parcelId);
 
   const { isPending, isError, data : parcelInfo= {} } = useQuery({
@@ -94,39 +98,94 @@ const CheckoutForm = () => {
       });
 
       if (error) {
+        let errorMessage = error.message;
         if (error.message.includes('blocked') || error.message.includes('fetch')) {
-          setError('Payment blocked by browser. Please disable ad blockers and try again.');
-        } else {
-          setError(error.message);
+          errorMessage = 'Payment blocked by browser. Please disable ad blockers and try again.';
         }
+        
+        // Show error Sweet Alert
+        await Swal.fire({
+          title: 'Payment Failed',
+          text: errorMessage,
+          icon: 'error',
+          confirmButtonText: 'Try Again',
+          confirmButtonColor: '#03373D'
+        });
+        
+        setError(errorMessage);
         setProcessing(false);
       } else if (paymentIntent.status === 'succeeded') {
         console.log("Payment successful:", paymentIntent);
         
         // Step 3: Update parcel status in backend after successful payment
         try {
-          await axiosSecure.patch(`/parcels/${parcelId}/payment`, {
+          const updateResponse = await axiosSecure.patch(`/parcels/${parcelId}/payment`, {
             paymentIntentId: paymentIntent.id,
             status: 'paid',
             paymentAmount: price,
-            paymentDate: new Date().toISOString()
+            paymentDate: new Date().toISOString(),
+            userEmail: user?.email
           });
-          console.log("Parcel status updated successfully");
+          
+          if (updateResponse.data.success) {
+            console.log("Parcel status updated successfully");
+            
+            // Show success Sweet Alert
+            await Swal.fire({
+              title: 'Payment Successful!',
+              text: `Your payment of ৳${price} has been processed successfully. Your parcel status has been updated.`,
+              icon: 'success',
+              confirmButtonText: 'Go to My Parcels',
+              confirmButtonColor: '#03373D',
+              showCancelButton: true,
+              cancelButtonText: 'Stay Here',
+              cancelButtonColor: '#6c757d',
+              allowOutsideClick: false
+            }).then((result) => {
+              if (result.isConfirmed) {
+                navigate('/dashboard/myParcels');
+              }
+            });
+            
+            setSuccess(true);
+          } else {
+            throw new Error('Failed to update parcel status');
+          }
         } catch (updateError) {
           console.error("Failed to update parcel status:", updateError);
-          // Still show success to user since payment went through
+          
+          // Show warning that payment succeeded but status update failed
+          await Swal.fire({
+            title: 'Payment Successful',
+            text: 'Your payment was processed successfully, but there was an issue updating the parcel status. Please contact support if needed.',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#03373D'
+          });
+          
+          setSuccess(true);
         }
         
-        setSuccess(true);
         setProcessing(false);
       }
     } catch (error) {
       console.error('Payment error:', error);
+      
+      let errorMessage = 'Payment failed. Please try again.';
       if (error.message.includes('blocked') || error.message.includes('fetch')) {
-        setError('Payment blocked by browser. Please disable ad blockers and try again.');
-      } else {
-        setError('Payment failed. Please try again.');
+        errorMessage = 'Payment blocked by browser. Please disable ad blockers and try again.';
       }
+      
+      // Show error Sweet Alert
+      await Swal.fire({
+        title: 'Payment Error',
+        text: errorMessage,
+        icon: 'error',
+        confirmButtonText: 'Try Again',
+        confirmButtonColor: '#03373D'
+      });
+      
+      setError(errorMessage);
       setProcessing(false);
     }
   };

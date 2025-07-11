@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../../Hook/useAuth";
 import Swal from "sweetalert2";
 import AOS from "aos";
@@ -8,6 +9,8 @@ import useAxiosSecure from "../../Hook/useAxiosSecure";
 
 const SendParcel = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const axiosSecure = useAxiosSecure();
 
   // Initialize AOS
   useEffect(() => {
@@ -267,45 +270,63 @@ const SendParcel = () => {
           trackingNumber: `PRO${Date.now()}${Math.floor(Math.random() * 1000)}`,
         };
 
-        // TODO: Replace with actual API call
-        const axiosSecure = useAxiosSecure();
-        axiosSecure.post("/parcels", parcelData).then((res) => {
+        // Save to database
+        try {
+          const res = await axiosSecure.post("/parcels", parcelData);
           console.log(res.data);
+          
           if (res.data.insertedId) {
             Swal.fire({
               icon: "success",
               title: "Parcel Booked Successfully!",
-              text: `Your parcel has been booked. Delivery cost: ৳${deliveryCost}`,
-              confirmButtonText: "OK",
+              text: `Your parcel has been booked. Delivery cost: ৳${deliveryCost}. Tracking Number: ${parcelData.trackingNumber}`,
+              confirmButtonText: "Go to My Parcels",
+              cancelButtonText: "Stay Here",
+              showCancelButton: true,
+              confirmButtonColor: "#03373D",
+              cancelButtonColor: "#6c757d",
+              allowOutsideClick: false
+            }).then((result) => {
+              if (result.isConfirmed) {
+                navigate("/dashboard/myParcels");
+              }
+            });
+            
+            // Reset form after successful submission
+            reset({
+              type: "",
+              title: "",
+              weight: "",
+              senderName: user?.displayName || "",
+              senderContact: "",
+              senderRegion: "",
+              senderServiceCenter: "",
+              senderAddress: "",
+              pickupInstruction: "",
+              receiverName: "",
+              receiverContact: "",
+              receiverRegion: "",
+              receiverServiceCenter: "",
+              receiverAddress: "",
+              deliveryInstruction: "",
             });
           }
-        });
-
-        console.log("Saving parcel:", parcelData);
-
-        // Reset form
-        reset({
-          type: "",
-          title: "",
-          weight: "",
-          senderName: user?.displayName || "",
-          senderContact: "",
-          senderRegion: "",
-          senderServiceCenter: "",
-          senderAddress: "",
-          pickupInstruction: "",
-          receiverName: "",
-          receiverContact: "",
-          receiverRegion: "",
-          receiverServiceCenter: "",
-          receiverAddress: "",
-          deliveryInstruction: "",
-        });
+        } catch (apiError) {
+          console.error("API Error:", apiError);
+          Swal.fire({
+            icon: "error",
+            title: "Booking Failed",
+            text: "There was an error booking your parcel. Please try again.",
+            confirmButtonColor: "#e74c3c"
+          });
+        }
       } catch (error) {
+        console.error("Form submission error:", error);
         Swal.fire({
           icon: "error",
           title: "Booking Failed",
           text: "There was an error booking your parcel. Please try again.",
+          confirmButtonColor: "#e74c3c"
         });
       }
     }
