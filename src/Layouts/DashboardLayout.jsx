@@ -63,7 +63,7 @@ const DashboardLayout = () => {
     },
     {
       name: "Track Parcel",
-      path: "/dashboard/track",
+      path: "/dashboard/tracking",
       icon: <FaSearch />,
       description: "Track your parcels",
     },

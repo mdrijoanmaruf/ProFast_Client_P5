@@ -13,6 +13,8 @@ import DashboardLayout from "../Layouts/DashboardLayout";
 import MyParcels from "../Pages/Dashboard/MyParcels/MyParcels";
 import Payment from "../Pages/Dashboard/Payment/Payment";
 import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
+import Tracking from "../Pages/Dashboard/Tracking/Tracking";
+import PublicTracking from "../Pages/PublicTracking/PublicTracking";
 
 export const router = createBrowserRouter([
     {
@@ -40,6 +42,10 @@ export const router = createBrowserRouter([
             {
                 path: 'about',
                 Component: AboutUs
+            },
+            {
+                path: 'track',
+                Component: PublicTracking
             },          
             
         ]
@@ -75,6 +81,10 @@ export const router = createBrowserRouter([
             {
                 path: 'payments',
                 Component : PaymentHistory
+            },
+            {
+                path: 'tracking',
+                Component : Tracking
             }
         ]
     }
