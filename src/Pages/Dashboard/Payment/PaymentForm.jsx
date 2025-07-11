@@ -1,73 +1,148 @@
-import React, { useState } from 'react'
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { FaCreditCard, FaLock, FaCheckCircle } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import useAxiosSecure from '../../../Hook/useAxiosSecure';
+import React, { useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { FaCreditCard, FaLock, FaCheckCircle } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../../../Hook/useAxiosSecure";
 
-const PaymentForm = () => {
-  const stripe = useStripe()
-  const elements = useElements()
-  const [processing, setProcessing] = useState(false)
-  const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(false)
-  const {parcelId} = useParams()
-  const axiosSecure = useAxiosSecure()
-  console.log(parcelId)
+// Initialize Stripe with error handling
+const stripePromise = loadStripe(import.meta.env.VITE_PaymentKey).catch(error => {
+  console.error('Stripe failed to load:', error);
+  return null;
+});
 
-  const {} = useQuery({
-    queryKey: ['parcels' , parcelId],
-    queryFn : async() => {
+const CheckoutForm = () => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const { parcelId } = useParams();
+  const axiosSecure = useAxiosSecure();
+  console.log(parcelId);
+
+  const { isPending, isError, data : parcelInfo= {} } = useQuery({
+    queryKey: ["parcels", parcelId],
+    queryFn: async () => {
       const res = await axiosSecure.get(`/parcels/${parcelId}`);
       return res.data;
-    }
-  })
-  
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setProcessing(true);
-        setError(null);
+    },
+  });
 
-        if(!stripe || !elements){
-          setProcessing(false);
-          return;
+  if (isPending) {
+    return "Loading ....."
+  }
+
+  console.log("Parcel info : ",parcelInfo);
+  const price = parcelInfo.cost;
+  const amountInCents = Math.round(price * 100); // Ensure it's an integer
+
+  // Validation for price
+  if (!price || price <= 0) {
+    return (
+      <div className="max-w-md mx-auto bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+        <h3 className="text-red-800 font-semibold mb-2">Invalid Payment Amount</h3>
+        <p className="text-red-600 text-sm">
+          Unable to process payment. The parcel cost is invalid.
+        </p>
+      </div>
+    );
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setProcessing(true);
+    setError(null);
+
+    if (!stripe || !elements) {
+      setError('Stripe failed to load. Please disable ad blockers and refresh the page.');
+      setProcessing(false);
+      return;
+    }
+
+    const card = elements.getElement(CardElement);
+
+    if (!card) {
+      setError('Card element not found. Please refresh the page.');
+      setProcessing(false);
+      return;
+    }
+
+    try {
+      // Step 1: Create payment intent
+      const res = await axiosSecure.post('/create-payment-intent', {
+        amount: amountInCents,
+        parcelId
+      });
+
+      const { clientSecret } = res.data;
+
+      // Step 2: Confirm payment with the client secret
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: card,
+          billing_details: {
+            name: 'Customer', // You can get this from user context
+          },
+        }
+      });
+
+      if (error) {
+        if (error.message.includes('blocked') || error.message.includes('fetch')) {
+          setError('Payment blocked by browser. Please disable ad blockers and try again.');
+        } else {
+          setError(error.message);
+        }
+        setProcessing(false);
+      } else if (paymentIntent.status === 'succeeded') {
+        console.log("Payment successful:", paymentIntent);
+        
+        // Step 3: Update parcel status in backend after successful payment
+        try {
+          await axiosSecure.patch(`/parcels/${parcelId}/payment`, {
+            paymentIntentId: paymentIntent.id,
+            status: 'paid',
+            paymentAmount: price,
+            paymentDate: new Date().toISOString()
+          });
+          console.log("Parcel status updated successfully");
+        } catch (updateError) {
+          console.error("Failed to update parcel status:", updateError);
+          // Still show success to user since payment went through
         }
         
-        const card = elements.getElement(CardElement);
-
-        if(!card){
-          setProcessing(false);
-          return;
-        }
-
-        const {error , paymentMethod} = await stripe.createPaymentMethod({
-          type: 'card',
-          card
-        })
-
-        if(error){
-          setError(error.message);
-          setProcessing(false);
-        } else {
-          console.log("Payment method : " , paymentMethod)
-          setSuccess(true);
-          setProcessing(false);
-        }
+        setSuccess(true);
+        setProcessing(false);
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      if (error.message.includes('blocked') || error.message.includes('fetch')) {
+        setError('Payment blocked by browser. Please disable ad blockers and try again.');
+      } else {
+        setError('Payment failed. Please try again.');
+      }
+      setProcessing(false);
     }
+  };
 
   const cardElementOptions = {
     style: {
       base: {
-        fontSize: '16px',
-        color: '#424770',
-        '::placeholder': {
-          color: '#aab7c4',
+        fontSize: "16px",
+        color: "#424770",
+        "::placeholder": {
+          color: "#aab7c4",
         },
-        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontFamily: "system-ui, -apple-system, sans-serif",
       },
       invalid: {
-        color: '#9e2146',
+        color: "#9e2146",
       },
     },
   };
@@ -79,7 +154,9 @@ const PaymentForm = () => {
           <FaCreditCard className="text-[#CAEB66] text-xl" />
           <h2 className="text-white text-lg font-semibold">Payment Details</h2>
         </div>
-        <p className="text-[#CAEB66] text-sm mt-1">Complete your parcel pickup payment</p>
+        <p className="text-[#CAEB66] text-sm mt-1">
+          Complete your parcel pickup payment
+        </p>
       </div>
 
       {/* Form Content */}
@@ -87,16 +164,24 @@ const PaymentForm = () => {
         {success ? (
           <div className="text-center py-8">
             <FaCheckCircle className="text-green-500 text-4xl mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Payment Successful!</h3>
-            <p className="text-gray-600">Your parcel pickup payment has been processed successfully.</p>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              Payment Successful!
+            </h3>
+            <p className="text-gray-600">
+              Your parcel pickup payment has been processed successfully.
+            </p>
           </div>
         ) : (
           <>
             {/* Payment Amount */}
             <div className="mb-6 p-4 bg-gray-50 rounded-lg">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600 font-medium">Parcel Pickup Fee</span>
-                <span className="text-2xl font-bold text-[#03373D]">$15.00</span>
+                <span className="text-gray-600 font-medium">
+                  Parcel Pickup Fee
+                </span>
+                <span className="text-2xl font-bold text-[#03373D]">
+                  {price} BDT
+                </span>
               </div>
             </div>
 
@@ -127,13 +212,13 @@ const PaymentForm = () => {
               )}
 
               {/* Submit Button */}
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={!stripe || processing}
                 className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 ${
                   !stripe || processing
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-[#03373D] hover:bg-[#044a52] active:scale-95'
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[#03373D] hover:bg-[#044a52] active:scale-95"
                 } focus:outline-none focus:ring-2 focus:ring-[#CAEB66] focus:ring-offset-2`}
               >
                 {processing ? (
@@ -144,7 +229,7 @@ const PaymentForm = () => {
                 ) : (
                   <div className="flex items-center justify-center space-x-2">
                     <FaCreditCard />
-                    <span>Pay $15.00 for Parcel Pickup</span>
+                    <span>Pay {price} BDT for Parcel Pickup</span>
                   </div>
                 )}
               </button>
@@ -164,7 +249,60 @@ const PaymentForm = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PaymentForm
+// Main PaymentForm component with Elements provider
+const PaymentForm = () => {
+  const [stripeLoadError, setStripeLoadError] = useState(false);
+  const [stripeLoaded, setStripeLoaded] = useState(false);
+
+  React.useEffect(() => {
+    stripePromise.then((stripe) => {
+      if (stripe) {
+        setStripeLoaded(true);
+      } else {
+        setStripeLoadError(true);
+      }
+    }).catch(() => {
+      setStripeLoadError(true);
+    });
+  }, []);
+
+  if (!stripeLoaded && !stripeLoadError) {
+    return (
+      <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+        <div className="text-center py-8">
+          <div className="w-8 h-8 border-2 border-[#03373D] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading payment system...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Elements stripe={stripePromise} onReady={() => console.log('Stripe loaded successfully')}>
+      {stripeLoadError ? (
+        <div className="max-w-md mx-auto bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+          <h3 className="text-red-800 font-semibold mb-2">Payment System Blocked</h3>
+          <p className="text-red-600 text-sm mb-4">
+            It looks like an ad blocker is preventing the payment system from loading.
+          </p>
+          <div className="text-left text-sm text-red-600">
+            <p className="font-medium mb-2">To fix this:</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>Disable ad blockers (uBlock Origin, Adblock Plus, etc.)</li>
+              <li>Try using incognito/private mode</li>
+              <li>Whitelist *.stripe.com in your ad blocker</li>
+              <li>Refresh the page after making changes</li>
+            </ul>
+          </div>
+        </div>
+      ) : (
+        <CheckoutForm />
+      )}
+    </Elements>
+  );
+};
+
+export default PaymentForm;
