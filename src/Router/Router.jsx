@@ -17,6 +17,8 @@ import Tracking from "../Pages/Dashboard/Tracking/Tracking";
 import PublicTracking from "../Pages/PublicTracking/PublicTracking";
 import BeARaider from "../Pages/BeARaider/BeARaider";
 import Dashboard404 from "../Pages/Dashboard/PageNotFoundDahboard/Dashboard404";
+import ActiveRiders from "../Pages/Dashboard/ActiveRiders/ActiveRiders";
+import PendingRiders from "../Pages/Dashboard/PendingRiders/PendingRiders";
 
 export const router = createBrowserRouter([
     {
@@ -93,6 +95,18 @@ export const router = createBrowserRouter([
             {
                 path: 'tracking',
                 Component : Tracking
+            },
+            {
+                path: 'activeRider',
+                Component : ActiveRiders
+            },
+            {
+                path: 'pendingRider',
+                Component : PendingRiders
+            },
+            {
+                path: 'profile',
+                Component : Dashboard404
             },
             {
                 path: '*',
