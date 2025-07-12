@@ -6,7 +6,7 @@ A modern, responsive web application for parcel delivery services built with Rea
 **[Visit ProFast Live](https://profast.rijoan.com)**
 
 ## 📋 Overview
-ProFast is a comprehensive parcel delivery platform that enables users to send, track, and manage their parcels with ease. The application features a modern dashboard, secure payment integration, and real-time tracking capabilities.
+ProFast is a comprehensive parcel delivery platform that enables users to send, track, and manage their parcels with ease. The application features a modern dashboard, secure payment integration, real-time tracking capabilities, and a complete admin system for managing riders and assignments. Built with modern web technologies, ProFast provides both customers and administrators with powerful tools to handle delivery operations efficiently.
 
 ## ✨ Key Features
 
@@ -15,6 +15,8 @@ ProFast is a comprehensive parcel delivery platform that enables users to send, 
 - **Track Parcels**: Real-time tracking with unique tracking numbers
 - **Payment Integration**: Secure payment processing with Stripe
 - **User Dashboard**: Comprehensive dashboard for managing parcels
+- **Rider Management**: Admin functionality to assign riders to parcels
+- **Assignment Tracking**: View and manage parcel-rider assignments
 - **Authentication**: Secure user authentication with Firebase
 
 ### 🎨 UI/UX Features
@@ -30,6 +32,8 @@ ProFast is a comprehensive parcel delivery platform that enables users to send, 
 - **TanStack Query**: Efficient data fetching and caching
 - **Axios**: HTTP client for API communications
 - **Firebase**: Authentication and backend services
+- **Admin Panel**: Role-based access control for administrative functions
+- **Real-time Updates**: Dynamic data refresh and live status tracking
 
 ## 🛠️ Tech Stack
 
@@ -61,89 +65,51 @@ ProFast is a comprehensive parcel delivery platform that enables users to send, 
 - npm or yarn
 - Git
 
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/profast.git
-   cd profast
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Update `.env` with your configuration:
-   ```env
-   REACT_APP_API_URL=http://localhost:5000
-   REACT_APP_FIREBASE_API_KEY=your-firebase-api-key
-   REACT_APP_FIREBASE_AUTH_DOMAIN=your-auth-domain
-   REACT_APP_FIREBASE_PROJECT_ID=your-project-id
-   REACT_APP_STRIPE_PUBLIC_KEY=your-stripe-public-key
-   ```
-
-4. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Open your browser**
-   Navigate to `http://localhost:3000`
-
-## 📁 Project Structure
-
-```
-src/
-├── assets/          # Images, icons, and static files
-├── components/      # Reusable UI components
-├── contexts/        # React contexts (Auth, Theme, etc.)
-├── hooks/          # Custom React hooks
-├── layouts/        # Layout components
-├── pages/          # Page components
-├── routes/         # Route configurations
-├── shared/         # Shared components (Header, Footer, etc.)
-└── utils/          # Utility functions
-```
-
-## 🔧 Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
-
 ## 🌟 Features Breakdown
 
 ### Authentication
 - User registration and login
 - Firebase authentication integration
-- Protected routes
+- Protected routes and role-based access control
 - Social login support
+- Admin and user role management
 
 ### Parcel Management
 - Create new parcel bookings
 - View parcel history
 - Track parcel status
 - Cost calculation based on weight and distance
+- Delivery priority settings (Standard, Express, Urgent)
+
+### Rider Assignment System
+- **Admin Dashboard**: Comprehensive rider management interface
+- **Assign Riders**: Intelligent assignment of available riders to paid parcels
+- **Assignment Tracking**: View all parcel-rider assignments with detailed information
+- **Rider Status**: Monitor active riders and their availability
+- **Real-time Updates**: Live status tracking for assignments and deliveries
 
 ### Payment System
 - Stripe integration for secure payments
 - Payment history tracking
 - Invoice generation
 - Multiple payment methods
+- Secure payment status management
 
 ### Dashboard
 - User-friendly dashboard interface
 - Parcel statistics and analytics
 - Quick actions and shortcuts
 - Responsive design for all devices
+- Role-based dashboard views (User/Admin)
+
+### Admin Features
+- **Rider Management**: Add, view, and manage delivery riders
+- **Assignment Control**: Assign riders to unassigned paid parcels
+- **Assignment Overview**: Comprehensive view of all parcel-rider assignments
+- **User Role Management**: Promote users to admin status
+- **System Analytics**: Monitor parcel volumes, rider performance, and delivery statistics
+- **Rider Status Tracking**: View active, pending, and inactive riders
+- **Advanced Filtering**: Search and filter parcels and assignments by multiple criteria
 
 ## 📱 Responsive Design
 The application is fully responsive and tested on:
@@ -154,35 +120,51 @@ The application is fully responsive and tested on:
 
 ## 🔐 Security Features
 - JWT token-based authentication
-- Secure API endpoints
+- Role-based access control (Admin/User)
+- Secure API endpoints with middleware protection
 - Input validation and sanitization
 - HTTPS encryption
 - Firebase security rules
+- Protected admin routes and functionality
 
 ## 🚀 Deployment
 The application is deployed on:
 - **Frontend**: Vercel/Netlify
-- **Backend**: Railway/Heroku
+- **Backend**: Vercel
 - **Database**: MongoDB Atlas
 - **CDN**: Firebase Storage
+
+## 🛣️ Application Routes
+
+### Public Routes
+- `/` - Homepage with service overview
+- `/login` - User authentication
+- `/register` - User registration
+- `/coverage` - Service coverage areas
+- `/track` - Public parcel tracking
+- `/about` - About the company
+
+### Protected User Routes
+- `/dashboard/myParcels` - User's parcel history
+- `/dashboard/tracking` - Track user's parcels
+- `/dashboard/payments` - Payment history
+- `/sendParcel` - Create new parcel booking
+
+### Admin Only Routes
+- `/dashboard/activeRider` - Manage active riders
+- `/dashboard/pendingRider` - Review pending rider applications
+- `/dashboard/assign-rider` - Assign riders to parcels
+- `/dashboard/assigned-parcels` - View all parcel assignments
+- `/dashboard/makeAdmin` - User role management
 
 ## 📄 Documentation
 - [Axios Implementation Guide](./Axios.md)
 - [TanStack Query Notes](./TanStackQueryNote.md)
+- [Stripe Payment Integration](./Stripe.md)
+- [Admin Features Guide](./ADMIN.md)
 - [API Documentation](./API.md)
 - [Deployment Guide](./DEPLOYMENT.md)
 
-## 🤝 Contributing
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📧 Contact
-- **Website**: [profast.rijoan.com](https://profast.rijoan.com)
-- **Email**: support@profast.com
-- **Developer**: Rijoan Rahman
 
 ## 📜 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -196,4 +178,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Made with ❤️ by Rijoan Rahman**
+**Made with by Rijoan Maruf**
