@@ -6,6 +6,7 @@ import Login from "../Pages/Authentication/Login/Login";
 import Register from "../Pages/Authentication/Register/Register";
 import Coverage from "../Pages/Coverage/Coverage";
 import PrivateRoutes from "../Routes/PrivateRoutes";
+import AdminRoute from "../Routes/AdminRoute";
 import SendParcel from "../Pages/SendParcel/SendParcel";
 import ErrorPage from "../Pages/ErrorPage/ErrorPage";
 import AboutUs from "../Pages/AboutUs/AboutUs";
@@ -20,6 +21,9 @@ import Dashboard404 from "../Pages/Dashboard/PageNotFoundDahboard/Dashboard404";
 import ActiveRiders from "../Pages/Dashboard/ActiveRiders/ActiveRiders";
 import PendingRiders from "../Pages/Dashboard/PendingRiders/PendingRiders";
 import MakeAdmin from "../Pages/Dashboard/MakeAdmin/MakeAdmin";
+import ForbiddenAccess from "../Pages/Forbidden/ForbiddenAccess";
+import AssignRider from "../Pages/Dashboard/AssignedRider/AssignRider";
+import AssignedParcels from "../Pages/Dashboard/AssignedParcels/AssignedParcels";
 
 export const router = createBrowserRouter([
     {
@@ -57,6 +61,10 @@ export const router = createBrowserRouter([
             {
                 path: 'track',
                 Component: PublicTracking
+            },
+            {
+                path: 'forbidden',
+                Component: ForbiddenAccess
             },          
             
         ]
@@ -99,11 +107,27 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'activeRider',
-                Component : ActiveRiders
+                element: <AdminRoute>
+                    <ActiveRiders />
+                </AdminRoute>
+            },
+            {
+                path: 'assign-rider',
+                element: <AdminRoute>
+                    <AssignRider></AssignRider>
+                </AdminRoute>
+            },
+            {
+                path: 'assigned-parcels',
+                element: <AdminRoute>
+                    <AssignedParcels></AssignedParcels>
+                </AdminRoute>
             },
             {
                 path: 'pendingRider',
-                Component : PendingRiders
+                element: <AdminRoute>
+                    <PendingRiders />
+                </AdminRoute>
             },
             {
                 path: 'profile',
@@ -111,7 +135,9 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'makeAdmin',
-                Component : MakeAdmin
+                element: <AdminRoute>
+                    <MakeAdmin />
+                </AdminRoute>
             },
             {
                 path: '*',

@@ -13,7 +13,8 @@ import {
   FaHome, 
   FaSignOutAlt, 
   FaTimes, 
-  FaBars 
+  FaBars,
+  FaUserTie 
 } from 'react-icons/fa';
 import useUserRole from "../Hook/useUserRole";
 
@@ -93,6 +94,18 @@ const DashboardLayout = () => {
       path: "/dashboard/makeAdmin",
       icon: <FaUser />,
       description: "Manage user roles and permissions",
+    },
+    {
+      name: "Assigned Rider",
+      path: "/dashboard/assign-rider",
+      icon: <FaUserTie />,
+      description: "Assign riders to delivery parcels",
+    },
+    {
+      name: "Assigned Parcels",
+      path: "/dashboard/assigned-parcels",
+      icon: <FaBox />,
+      description: "View parcels assigned to riders",
     },
   ];
 
