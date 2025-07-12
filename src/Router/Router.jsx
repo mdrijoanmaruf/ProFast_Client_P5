@@ -19,6 +19,7 @@ import BeARaider from "../Pages/BeARaider/BeARaider";
 import Dashboard404 from "../Pages/Dashboard/PageNotFoundDahboard/Dashboard404";
 import ActiveRiders from "../Pages/Dashboard/ActiveRiders/ActiveRiders";
 import PendingRiders from "../Pages/Dashboard/PendingRiders/PendingRiders";
+import MakeAdmin from "../Pages/Dashboard/MakeAdmin/MakeAdmin";
 
 export const router = createBrowserRouter([
     {
@@ -107,6 +108,10 @@ export const router = createBrowserRouter([
             {
                 path: 'profile',
                 Component : Dashboard404
+            },
+            {
+                path: 'makeAdmin',
+                Component : MakeAdmin
             },
             {
                 path: '*',

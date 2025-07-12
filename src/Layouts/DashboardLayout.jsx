@@ -15,6 +15,7 @@ import {
   FaTimes, 
   FaBars 
 } from 'react-icons/fa';
+import useUserRole from "../Hook/useUserRole";
 
 
 const DashboardLayout = () => {
@@ -22,6 +23,9 @@ const DashboardLayout = () => {
   const { user, logOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const {role} = useUserRole()
+  console.log(role)
 
   // Initialize AOS
   useEffect(() => {
@@ -48,13 +52,30 @@ const DashboardLayout = () => {
     }
   };
 
-  const menuItems = [
+  // Base menu items for all users
+  const baseMenuItems = [
     {
       name: "My Parcels",
       path: "/dashboard/myParcels",
       icon: <FaBox />,
       description: "View and manage your parcels",
     },
+    {
+      name: "Track Parcel",
+      path: "/dashboard/tracking",
+      icon: <FaSearch />,
+      description: "Track your parcels",
+    },
+    {
+      name: "Payment History",
+      path: "/dashboard/payments",
+      icon: <FaCreditCard />,
+      description: "View payment history",
+    },
+  ];
+
+  // Admin-only menu items
+  const adminMenuItems = [
     {
       name: "Active Rider",
       path: "/dashboard/activeRider",
@@ -68,24 +89,17 @@ const DashboardLayout = () => {
       description: "View pending riders",
     },
     {
-      name: "Track Parcel",
-      path: "/dashboard/tracking",
-      icon: <FaSearch />,
-      description: "Track your parcels",
-    },
-    {
-      name: "Profile",
-      path: "/dashboard/profile",
+      name: "Make Admin",
+      path: "/dashboard/makeAdmin",
       icon: <FaUser />,
-      description: "Manage your profile",
-    },
-    {
-      name: "Payment History",
-      path: "/dashboard/payments",
-      icon: <FaCreditCard />,
-      description: "View payment history",
+      description: "Manage user roles and permissions",
     },
   ];
+
+  // Combine menu items based on user role
+  const menuItems = role === 'admin' 
+    ? [...baseMenuItems, ...adminMenuItems]
+    : baseMenuItems;
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -262,8 +276,6 @@ const DashboardLayout = () => {
             </div>
           </div>
         </header>
-
-        {/* Desktop Top Header (if needed) */}
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto bg-gray-50" data-aos="fade-up" data-aos-delay="300">
