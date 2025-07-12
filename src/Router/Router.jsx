@@ -15,6 +15,8 @@ import Payment from "../Pages/Dashboard/Payment/Payment";
 import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
 import Tracking from "../Pages/Dashboard/Tracking/Tracking";
 import PublicTracking from "../Pages/PublicTracking/PublicTracking";
+import BeARaider from "../Pages/BeARaider/BeARaider";
+import Dashboard404 from "../Pages/Dashboard/PageNotFoundDahboard/Dashboard404";
 
 export const router = createBrowserRouter([
     {
@@ -33,6 +35,12 @@ export const router = createBrowserRouter([
                 path: "sendParcel",
                 element : <PrivateRoutes>
                     <SendParcel></SendParcel>
+                </PrivateRoutes>
+            },
+            {
+                path: "be-a-raider",
+                element : <PrivateRoutes>
+                    <BeARaider></BeARaider>
                 </PrivateRoutes>
             },
             {
@@ -85,7 +93,12 @@ export const router = createBrowserRouter([
             {
                 path: 'tracking',
                 Component : Tracking
-            }
+            },
+            {
+                path: '*',
+                Component : Dashboard404
+            },
+            
         ]
     }
 ])

@@ -171,9 +171,11 @@ const Navbar = () => {
               )}
             </div>
           )}
+          <Link to='be-a-raider'>
           <button className="bg-[#CAEB66] px-6 py-2 rounded-lg font-medium text-gray-800 hover:bg-[#b8d659] transition-colors duration-200">
             Be a Rider
           </button>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}

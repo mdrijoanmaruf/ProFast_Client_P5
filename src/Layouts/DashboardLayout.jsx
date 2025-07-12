@@ -56,10 +56,16 @@ const DashboardLayout = () => {
       description: "View and manage your parcels",
     },
     {
-      name: "Send Parcel",
-      path: "/sendParcel",
+      name: "Active Rider",
+      path: "/dashboard/activeRider",
       icon: <FaPaperPlane />,
-      description: "Send a new parcel",
+      description: "View active riders",
+    },
+    {
+      name: "Pending Rider",
+      path: "/dashboard/pendingRider",
+      icon: <FaUser />,
+      description: "View pending riders",
     },
     {
       name: "Track Parcel",
@@ -156,8 +162,6 @@ const DashboardLayout = () => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                // data-aos="fade-right"
-                // data-aos-delay={300 + (index * 50)}
                 className={`flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-200 group ${
                   isActive
                     ? "bg-[#03373D] text-white shadow-lg"
